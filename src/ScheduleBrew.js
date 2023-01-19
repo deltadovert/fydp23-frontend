@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Button } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import Spacer from './Spacer';
 import moment from 'moment';
+import GenericScreen from './GenericScreen';
 
 // const DAYS = [
 //   'Monday',
@@ -50,11 +51,7 @@ const ScheduleBrew = ({ navigation }) => {
   }, [date, time]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Schedule a new brew!</Text>
-
-      <Spacer height={20} />
-
+    <GenericScreen title="Schedule a new brew!">
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text>Date</Text>
         <Spacer width={20} />
@@ -89,28 +86,10 @@ const ScheduleBrew = ({ navigation }) => {
       <Spacer height={20} />
 
       <Button title="Go back" onPress={onGoBack} />
-    </View>
+    </GenericScreen>
   );
 };
 
 export default ScheduleBrew;
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    paddingTop: '20%',
-    flex: 1,
-  },
-  title: {
-    fontSize: '30',
-    fontWeight: 'bold',
-  },
-  labels: {
-    flexDirection: 'row',
-    alignItems: 'space-between',
-  },
-  labelText: {
-    fontSize: '12',
-  },
-});
+const styles = StyleSheet.create({});

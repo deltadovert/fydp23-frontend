@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
+import GenericScreen from './GenericScreen';
 
 const Home = ({ navigation }) => {
   const onScheduleNewBrew = () => {
@@ -7,22 +8,13 @@ const Home = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text>Welcome Back to BrewX</Text>
-
+    <GenericScreen title="Welcome Back to BrewX!">
       <Button onPress={onScheduleNewBrew} title="Schedule a new brew" />
       <Button onPress={() => {}} title="Brew now" />
-    </View>
+    </GenericScreen>
   );
 };
 
 export default Home;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    paddingTop: '20%',
-  },
-});
+const styles = StyleSheet.create({});
