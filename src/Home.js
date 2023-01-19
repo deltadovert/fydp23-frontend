@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
+import BrewStatus from './BrewStatus';
 import GenericScreen from './GenericScreen';
 
 const Home = ({ navigation }) => {
@@ -9,6 +10,7 @@ const Home = ({ navigation }) => {
 
   return (
     <GenericScreen title="Welcome Back to BrewX!">
+      <BrewStatus />
       <Button onPress={onScheduleNewBrew} title="Schedule a new brew" />
       <Button onPress={() => {}} title="Brew now" />
     </GenericScreen>
