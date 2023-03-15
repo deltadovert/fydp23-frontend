@@ -1,7 +1,12 @@
 import React from 'react';
 import { View } from 'react-native';
 
-const Spacer = ({ width, height }) => {
+interface IProps {
+  width?: number;
+  height?: number;
+}
+
+const Spacer: React.FC<IProps> = ({ width, height }) => {
   return <View style={{ width, height }} />;
 };
 

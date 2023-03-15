@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "target": "es5",
+    "jsx": "react",
+    "checkJs": true
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "extends": "expo/tsconfig.base"
+}
