@@ -52,15 +52,11 @@ const ExtractionTimeSlider: React.FC<IProps> = ({
     (1 / 2) * SLIDER_HEAD_SIZE;
 
   return (
-    <View style={Style.container}>
+    <View style={Style.container} {...panResponder.panHandlers}>
       <Text size={TextSize.MEDIUM}>Extraction Time</Text>
 
       <Spacer height={10} />
-      <View
-        style={Style.sliderBox}
-        {...panResponder.panHandlers}
-        onLayout={handleSliderBarLayout}
-      >
+      <View style={Style.sliderBox} onLayout={handleSliderBarLayout}>
         <View style={Style.sliderBar} />
 
         <View style={[Style.sliderHead, { left: sliderHeadPosition }]} />

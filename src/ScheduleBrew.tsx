@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TextInput } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import RNDateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
@@ -13,10 +13,11 @@ import BrewSizePicker, { BrewSize } from './components/BrewSizePicker';
 import Section from './components/Section';
 import BrewToggle from './components/BrewToggle';
 import BrewStrengthPicker, { BrewStrength } from './components/StrengthPicker';
-import { DEFAULT_EXTRACTION_TIME, MIN_SLIDER_VALUE } from './consts';
+import { DEFAULT_EXTRACTION_TIME } from './consts';
 import Text from './components/Text';
 import { COLORS } from './assets/colors';
 import ExtractionTimeSlider from './components/ExtractionTimeSlider';
+import PostBrewModal, { PostBrewModalType } from './components/PostBrewModal';
 
 const getTimestamp = (date, time) => {
   const timeArr = time.split(':'); // '04:20'
@@ -56,6 +57,9 @@ const ScheduleBrew = ({ navigation }) => {
   );
 
   const [isMakingReq, setMakingReq] = React.useState<boolean>(false);
+  const [hasError, setHasError] = React.useState<boolean>(false);
+
+  const [showModal, setShowModal] = React.useState<boolean>(false);
 
   const api = useAPI();
 
@@ -65,24 +69,37 @@ const ScheduleBrew = ({ navigation }) => {
 
   const onSubmit = () => {
     setMakingReq(true);
-    isSingle
-      ? api
-          .postSingleBrew({
+
+    const post = () =>
+      isSingle
+        ? api.postSingleBrew({
             ready_timestamp: timestamp,
             duration: extractionTime,
             size: brewSize,
             strength: brewStrength,
           })
-          .finally(() => setMakingReq(false))
-      : api
-          .postScheduledBrew({
+        : api.postScheduledBrew({
             days,
             ready_time: time,
             duration: extractionTime,
             size: brewSize,
             strength: brewStrength,
-          })
-          .finally(() => setMakingReq(false));
+          });
+    post()
+      .then(() => {
+        setHasError(false);
+        setShowModal(true);
+      })
+      .catch(() => {
+        setHasError(true);
+        setShowModal(true);
+      })
+      .finally(() => setMakingReq(false));
+  };
+
+  const onModalClose = () => {
+    setShowModal(false);
+    navigation.pop();
   };
 
   React.useEffect(() => {
@@ -174,6 +191,12 @@ const ScheduleBrew = ({ navigation }) => {
           isLoading={isMakingReq}
         />
       </View>
+      <PostBrewModal
+        visible={showModal}
+        onClose={onModalClose}
+        type={hasError ? PostBrewModalType.FAILURE : PostBrewModalType.SUCCESS}
+        brewReadyTime={time}
+      />
     </GenericScreen>
   );
 };

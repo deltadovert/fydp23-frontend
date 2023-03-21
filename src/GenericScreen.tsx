@@ -3,28 +3,20 @@ import { SafeAreaView, StyleSheet, View, ViewStyle } from 'react-native';
 import Text, { TextSize } from './components/Text';
 import Spacer from './components/Spacer';
 import { COLORS } from './assets/colors';
-import Logo from './components/Logo';
 
 interface IProps {
   title: string;
   children?: React.ReactNode;
   style?: ViewStyle;
-  showLogo?: boolean;
 }
 
-const GenericScreen: React.FC<IProps> = ({
-  title,
-  children,
-  style,
-  showLogo,
-}) => {
+const GenericScreen: React.FC<IProps> = ({ title, children, style }) => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={[styles.container, style]}>
         <Text style={styles.title} size={TextSize.TITLE}>
           {title}
         </Text>
-        {showLogo ? <Logo /> : null}
         <Spacer height={20} />
         {children}
       </View>

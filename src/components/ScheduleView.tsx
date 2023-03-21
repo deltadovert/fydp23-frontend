@@ -35,6 +35,7 @@ const ScheduleView: React.FC<IProps> = () => {
     api
       .getSchedule()
       .then((res) => setSchedule(res.schedule))
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 

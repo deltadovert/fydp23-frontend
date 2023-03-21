@@ -2,7 +2,6 @@ import React from 'react';
 import {
   ActivityIndicator,
   Pressable,
-  StyleProp,
   StyleSheet,
   ViewStyle,
 } from 'react-native';

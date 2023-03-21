@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, ActivityIndicator, Image } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Text, { TextSize } from './Text';
-import CircularProgress from 'react-native-circular-progress-indicator';
 import { useAPI } from '../api/api';
 import { H_TO_SEC, MIN_TO_SEC, REFETCH_STATUS_MS, SEC_TO_MS } from '../consts';
 import { IBrewStatus } from '../api/types/types';
@@ -9,7 +8,7 @@ import moment from 'moment-timezone';
 import Spacer from './Spacer';
 import { COLORS } from '../assets/colors';
 import Loading from './Loading';
-import { IMAGES } from '../assets/images/images';
+import Check from './Check';
 
 const getFormattedString = (timestamp: number) => {
   const userTimezone = moment.tz.guess();
@@ -52,11 +51,10 @@ const BrewStatus: React.FC = () => {
     await api
       .getStatus()
       .then((res) => {
-        if (res !== status) {
-          setStatus(res);
-        }
+        setStatus(res);
+        setHasError(false);
       })
-      .catch((err) => setHasError(true));
+      .catch(() => setHasError(true));
 
   React.useEffect(() => {
     setLoading(true);
@@ -69,6 +67,20 @@ const BrewStatus: React.FC = () => {
     return (
       <View style={Style.container}>
         <Loading />
+        <Text style={Style.text} size={TextSize.MEDIUM}>
+          Loading brew status...
+        </Text>
+      </View>
+    );
+  };
+
+  const ErrorView: React.FC = () => {
+    return (
+      <View style={Style.container}>
+        <Loading />
+        <Text style={Style.error} size={TextSize.SMALL}>
+          There was an error getting your brew schedule. Trying again...
+        </Text>
       </View>
     );
   };
@@ -76,22 +88,12 @@ const BrewStatus: React.FC = () => {
   const NoBrewsView: React.FC = () => {
     return (
       <View style={Style.container}>
-        <Text style={Style.statusText}>Your brew status</Text>
+        <Text style={Style.statusText} size={TextSize.LARGE}>
+          Your brew status
+        </Text>
         <Spacer height={30} />
         <Text style={Style.text} size={TextSize.MEDIUM}>
           Schedule a brew to get started!
-        </Text>
-      </View>
-    );
-  };
-
-  const StartingView: React.FC = () => {
-    return (
-      <View style={Style.container}>
-        <Text style={Style.statusText}>Your brew status</Text>
-        <Loading />
-        <Text style={Style.text}>
-          A new brew has been sent to your BrewDaddy!
         </Text>
       </View>
     );
@@ -122,11 +124,7 @@ const BrewStatus: React.FC = () => {
           Your brew status
         </Text>
         <Spacer height={10} />
-        <Image
-          source={IMAGES.checkMark}
-          style={{ width: '100%', height: 75 }}
-          resizeMode="contain"
-        />
+        <Check />
         <Spacer height={10} />
         <Text style={Style.text} size={TextSize.MEDIUM}>
           All Done. Enjoy!
@@ -140,6 +138,8 @@ const BrewStatus: React.FC = () => {
   };
 
   if (isLoading) return <LoadingView />;
+
+  if (hasError) return <ErrorView />;
 
   if (!status.is_brewing && !status.is_done) return <NoBrewsView />;
 
@@ -168,5 +168,9 @@ const Style = StyleSheet.create({
   text: {
     textAlign: 'center',
     color: 'white',
+  },
+  error: {
+    textAlign: 'center',
+    color: '#dddd77',
   },
 });

@@ -23,7 +23,10 @@ export class API {
         console.log(`😜 - ${JSON.stringify(data)}`);
         return data;
       })
-      .catch((err) => console.log(`😵 - ${JSON.stringify(err)}`));
+      .catch((err) => {
+        console.log(`😵 - ${JSON.stringify(err)}`);
+        throw err;
+      });
   }
 
   async get(path: string) {
@@ -34,23 +37,26 @@ export class API {
         console.log(`😜 - ${JSON.stringify(data)}`);
         return data;
       })
-      .catch((err) => console.log(`😵 - ${JSON.stringify(err)}`));
+      .catch((err) => {
+        console.log(`😵 - ${JSON.stringify(err)}`);
+        throw err;
+      });
   }
 
   async postSingleBrew(data: ISingleBrew) {
-    return await this.post(ENDPOINTS.single, data);
+    return this.post(ENDPOINTS.single, data);
   }
 
   async postScheduledBrew(data: IScheduledBrew) {
-    return await this.post(ENDPOINTS.schedule, data);
+    return this.post(ENDPOINTS.schedule, data);
   }
 
   async getStatus(): Promise<IBrewStatus> {
-    return await this.get(ENDPOINTS.status);
+    return this.get(ENDPOINTS.status);
   }
 
   async getSchedule(): Promise<IBrewSchedule> {
-    return await this.get(ENDPOINTS.schedule);
+    return this.get(ENDPOINTS.schedule);
   }
 
   async demo(action) {
