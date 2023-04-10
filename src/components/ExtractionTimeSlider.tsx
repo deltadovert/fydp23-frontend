@@ -20,6 +20,7 @@ interface IProps {
   setSliderValue: (value: number) => void;
   sliderBarWidth: number;
   setSliderBarWidth: (value: number) => void;
+  isCold: boolean;
 }
 
 const ExtractionTimeSlider: React.FC<IProps> = ({
@@ -27,6 +28,7 @@ const ExtractionTimeSlider: React.FC<IProps> = ({
   setSliderValue,
   sliderBarWidth,
   setSliderBarWidth,
+  isCold,
 }) => {
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: () => true,
@@ -42,6 +44,8 @@ const ExtractionTimeSlider: React.FC<IProps> = ({
       );
     },
   });
+
+  const unit = isCold ? 'h' : 'min';
 
   const handleSliderBarLayout = (event: LayoutChangeEvent) => {
     setSliderBarWidth(event.nativeEvent.layout.width);
@@ -63,11 +67,11 @@ const ExtractionTimeSlider: React.FC<IProps> = ({
       </View>
       <Spacer height={10} />
       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Text size={TextSize.TINY}>{MIN_SLIDER_VALUE}h</Text>
+        <Text size={TextSize.TINY}>{MIN_SLIDER_VALUE}{unit}</Text>
         <Text size={TextSize.TINY}>
-          {(MIN_SLIDER_VALUE + MAX_SLIDER_VALUE) / 2}h
+          {(MIN_SLIDER_VALUE + MAX_SLIDER_VALUE) / 2}{unit}
         </Text>
-        <Text size={TextSize.TINY}>{MAX_SLIDER_VALUE}h</Text>
+        <Text size={TextSize.TINY}>{MAX_SLIDER_VALUE}{unit}</Text>
       </View>
     </View>
   );

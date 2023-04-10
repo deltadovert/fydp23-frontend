@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import Text, { TextSize } from './Text';
 import { useAPI } from '../api/api';
 import { H_TO_SEC, MIN_TO_SEC, REFETCH_STATUS_MS, SEC_TO_MS } from '../consts';
@@ -9,6 +9,7 @@ import Spacer from './Spacer';
 import { COLORS } from '../assets/colors';
 import Loading from './Loading';
 import Check from './Check';
+import { IMAGES } from '../assets/images/images';
 
 const getFormattedString = (timestamp: number) => {
   const userTimezone = moment.tz.guess();
@@ -51,8 +52,10 @@ const BrewStatus: React.FC = () => {
     await api
       .getStatus()
       .then((res) => {
-        setStatus(res);
-        setHasError(false);
+        if (JSON.stringify(res) !== JSON.stringify(status)) {
+          setStatus(res);
+          setHasError(false);
+        }
       })
       .catch(() => setHasError(true));
 
@@ -77,6 +80,9 @@ const BrewStatus: React.FC = () => {
   const ErrorView: React.FC = () => {
     return (
       <View style={Style.container}>
+        <Text style={Style.statusText} size={TextSize.LARGE}>
+          Uh oh!
+        </Text>
         <Loading />
         <Text style={Style.error} size={TextSize.SMALL}>
           There was an error getting your brew schedule. Trying again...
@@ -91,7 +97,16 @@ const BrewStatus: React.FC = () => {
         <Text style={Style.statusText} size={TextSize.LARGE}>
           Your brew status
         </Text>
-        <Spacer height={30} />
+        <Image
+          source={IMAGES.questionBev}
+          resizeMode="contain"
+          style={{
+            height: 250,
+            width: '100%',
+            marginTop: -60,
+            marginBottom: -40,
+          }}
+        />
         <Text style={Style.text} size={TextSize.MEDIUM}>
           Schedule a brew to get started!
         </Text>

@@ -5,6 +5,7 @@ interface IBrew {
   size: BrewSize;
   strength: BrewStrength;
   duration: number;
+  is_cold: boolean;
 }
 
 export interface ISingleBrew extends IBrew {

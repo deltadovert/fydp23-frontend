@@ -20,6 +20,7 @@ const Modal: React.FC<ModalProps> = ({ visible, onClose, children }) => {
         height: SCREEN_HEIGHT,
         width: SCREEN_WIDTH,
         position: 'absolute',
+        zIndex: 999,
       }}
     >
       <View style={Style.overlay} />

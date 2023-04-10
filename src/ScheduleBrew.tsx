@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import RNDateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
@@ -18,6 +18,7 @@ import Text from './components/Text';
 import { COLORS } from './assets/colors';
 import ExtractionTimeSlider from './components/ExtractionTimeSlider';
 import PostBrewModal, { PostBrewModalType } from './components/PostBrewModal';
+import HotWaterMode from './components/HotWaterMode';
 
 const getTimestamp = (date, time) => {
   const timeArr = time.split(':'); // '04:20'
@@ -61,6 +62,8 @@ const ScheduleBrew = ({ navigation }) => {
 
   const [showModal, setShowModal] = React.useState<boolean>(false);
 
+  const [isCold, setIsCold] = React.useState<boolean>(true);
+
   const api = useAPI();
 
   const onGoBack = () => {
@@ -77,6 +80,7 @@ const ScheduleBrew = ({ navigation }) => {
             duration: extractionTime,
             size: brewSize,
             strength: brewStrength,
+            is_cold: isCold,
           })
         : api.postScheduledBrew({
             days,
@@ -84,6 +88,7 @@ const ScheduleBrew = ({ navigation }) => {
             duration: extractionTime,
             size: brewSize,
             strength: brewStrength,
+            is_cold: isCold,
           });
     post()
       .then(() => {
@@ -118,62 +123,80 @@ const ScheduleBrew = ({ navigation }) => {
 
   return (
     <GenericScreen title="Schedule a new brew!">
-      <Section title="Size">
-        <BrewSizePicker selectedSize={brewSize} setSize={setBrewSize} />
-      </Section>
+      <ScrollView
+        contentContainerStyle={{
+          alignItems: 'center',
+          paddingBottom: 150,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        <Section title="Size">
+          <BrewSizePicker selectedSize={brewSize} setSize={setBrewSize} />
+        </Section>
 
-      <Spacer height={20} />
+        <Spacer height={20} />
 
-      <Section title="Strength">
-        <BrewStrengthPicker
-          selectedStrength={brewStrength}
-          setStrength={setBrewStrength}
+        <Section title="Strength">
+          <BrewStrengthPicker
+            selectedStrength={brewStrength}
+            setStrength={setBrewStrength}
+          />
+        </Section>
+
+        <Spacer height={20} />
+
+        <HotWaterMode isCold={isCold} setIsCold={setIsCold} />
+
+        <Spacer height={20} />
+
+        <ExtractionTimeSlider
+          sliderValue={extractionTime}
+          setSliderValue={setExtractionTime}
+          sliderBarWidth={sliderBarWidth}
+          setSliderBarWidth={setSliderBarWidth}
+          isCold={isCold}
         />
-      </Section>
 
-      <Spacer height={20} />
+        <Spacer height={20} />
 
-      <ExtractionTimeSlider
-        sliderValue={extractionTime}
-        setSliderValue={setExtractionTime}
-        sliderBarWidth={sliderBarWidth}
-        setSliderBarWidth={setSliderBarWidth}
-      />
+        <BrewToggle
+          isSingle={isSingle}
+          setIsSingle={(isSingle) => setIsSingle(isSingle)}
+        />
 
-      <Spacer height={20} />
+        <Spacer height={20} />
 
-      <BrewToggle
-        isSingle={isSingle}
-        setIsSingle={(isSingle) => setIsSingle(isSingle)}
-      />
+        {isSingle ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text>Have brew ready on</Text>
+            <Spacer width={20} />
+            <RNDateTimePicker
+              value={new Date(timestamp * 1000)}
+              onChange={handleDateChange}
+            />
+          </View>
+        ) : (
+          <DayPicker selectedDays={days} onSelectedDaysChange={setDays} />
+        )}
 
-      <Spacer height={20} />
+        <Spacer height={10} />
 
-      {isSingle ? (
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text>Have brew ready on</Text>
+          <Text>Have brew{isSingle ? '' : 's'} ready by</Text>
           <Spacer width={20} />
           <RNDateTimePicker
+            mode="time"
             value={new Date(timestamp * 1000)}
-            onChange={handleDateChange}
+            onChange={handleTimeChange}
           />
         </View>
-      ) : (
-        <DayPicker selectedDays={days} onSelectedDaysChange={setDays} />
-      )}
-
-      <Spacer height={10} />
-
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Text>Have brew{isSingle ? '' : 's'} ready by</Text>
-        <Spacer width={20} />
-        <RNDateTimePicker
-          mode="time"
-          value={new Date(timestamp * 1000)}
-          onChange={handleTimeChange}
-        />
-      </View>
-
+      </ScrollView>
+      <PostBrewModal
+        visible={showModal}
+        onClose={onModalClose}
+        type={hasError ? PostBrewModalType.FAILURE : PostBrewModalType.SUCCESS}
+        brewReadyTime={time}
+      />
       <View
         style={{
           flexDirection: 'row',
@@ -191,12 +214,6 @@ const ScheduleBrew = ({ navigation }) => {
           isLoading={isMakingReq}
         />
       </View>
-      <PostBrewModal
-        visible={showModal}
-        onClose={onModalClose}
-        type={hasError ? PostBrewModalType.FAILURE : PostBrewModalType.SUCCESS}
-        brewReadyTime={time}
-      />
     </GenericScreen>
   );
 };
